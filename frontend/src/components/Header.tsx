@@ -48,6 +48,9 @@ function Header() {
         console.log('Mode:', newMode); // Debugging
         console.log('Body classList:', document.body.classList); 
     };
+    if(error){
+        return(<>{error}</>)
+    }
 
     return (
         <div className="flex items-center py-6 px-4 justify-between border border-b-gray-300 sm:px-11">
