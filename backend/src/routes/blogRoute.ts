@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { authMiddleware } from "../middlware/authmiddleware";
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
+import z from 'zod'
+
 const blogRouter = new Hono<{
 	Bindings: {
 		DATABASE_URL: string,
@@ -18,9 +20,20 @@ blogRouter.get('/hello',async (c)=>{
     })
 
 });
+const bloginput = z.object({
+    title: z.string(),
+    content: z.string(),
+});
+
+
 blogRouter.post('/create',authMiddleware,async (c)=>{
     console.log("hello");
     const body=await c.req.json();
+    const { success } = bloginput.safeParse(body);
+	if (!success) {
+		c.status(400);
+		return c.json({ error: "invalid input" });
+	}
     const userid=c.get('user');
     console.log(userid);
     const prisma = new PrismaClient({
@@ -73,7 +86,15 @@ blogRouter.get('/getpost/:id', async (c) => {
 	const post = await prisma.post.findUnique({
 		where: {
 			id
-		}
+		},select:{
+            content:true,
+            title:true,
+            author:{
+                select:{
+                    name:true
+                }
+            }
+        }
 	});
 
 	return c.json(post);
@@ -84,7 +105,18 @@ blogRouter.get('/bulk', async (c) => {
 		datasourceUrl: c.env?.DATABASE_URL	,
 	}).$extends(withAccelerate());
 	
-	const posts = await prisma.post.findMany({});
+	const posts = await prisma.post.findMany({
+        select:{
+            content:true,
+            title:true,
+            id:true,
+            author:{
+                select:{
+                    name:true
+                }
+            }
+        }
+    });
 
 	return c.json(posts);
 })

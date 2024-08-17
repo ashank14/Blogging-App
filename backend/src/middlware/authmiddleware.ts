@@ -6,8 +6,11 @@ export const authMiddleware = async (c: Context, next: Next) => {
   const authHeader = c.req.header('Authorization');
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.log("missin");
+    c.status(404);
     return c.json({ message: 'Unauthorized: Missing or invalid token' }, 403);
   }
+  console.log("missingg");
 
   const token = authHeader.split(' ')[1];
   const jwtsecret = c.env.JWT_SECRET;
