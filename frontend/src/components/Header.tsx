@@ -53,7 +53,7 @@ function Header() {
     }
 
     return (
-        <div className="flex items-center py-6 px-4 justify-between border border-b-gray-300 sm:px-11">
+        <div className="flex items-center py-6 px-4 justify-between border-b border-gray-800 sm:px-11">
             <div className="flex font-semibold text-3xl items-center">
                 <div className="hidden mr-2 sm:flex">
                     {mode?<div className="rounded-full w-6 h-6 bg-white"></div>:<div className="rounded-full w-6 h-6 bg-black"></div>}
